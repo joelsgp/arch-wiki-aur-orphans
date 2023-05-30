@@ -1,6 +1,7 @@
 #!/usr/bin/env python
-
+import fileinput
 import subprocess
+import sys
 from datetime import datetime
 
 from AUR.RPC import AurRpc
@@ -53,12 +54,24 @@ def list_orphaned(package_names: PackageNames) -> PackageNames:
     return hit_packages
 
 
+def list_wiki_subprocess() -> PackageNames:
+    print("Getting packages from script")
+    stdout = subprocess.check_output("./list-wiki.sh", text=True)
+    package_names = frozenset(stdout.splitlines())
+    return package_names
+
+
+def list_wiki_stdin() -> PackageNames:
+    print("Reading packages from stdin")
+    with fileinput.input(files=("-",)) as lines:
+        package_names = frozenset(lines)
+    return package_names
+
 
 def main():
     # get a set of all AUR packages referenced in the Arch Wiki
     print("Getting list of packages to check")
-    stdout = subprocess.check_output("./list-wiki.sh", text=True)
-    package_names = frozenset(stdout.splitlines())
+    package_names = list_wiki_stdin()
     print(f"Arch wiki lists {len(package_names)} packages")
 
     # list_out_of_date(package_names)
