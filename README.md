@@ -1,5 +1,14 @@
 #  arch-wiki-aur-orphans
 
+update: lol I think their bot already does this actually,
+
+https://wiki.archlinux.org/title/Special:WhatLinksHere/Template:Broken_package_link
+
+See also:
+* https://wiki.archlinux.org/title/Template:Broken_package_link
+* https://wiki.archlinux.org/title/Help:Procedures#Fix_broken_package_links
+* https://wiki.archlinux.org/title/AUR_Cleanup_Day
+
 Script to locate any AUR packages that are broken and also referenced in the arch wiki
 
 Current output as of 2023-05-30: https://gist.github.com/joelsgp/f2090cf0744cacd964e6f29a06ef6362
@@ -18,3 +27,5 @@ Current output as of 2023-05-30: https://gist.github.com/joelsgp/f2090cf0744cacd
 
 ## Notes
 Mediawiki has this feature but I don't think it's enabled for archwiki https://www.mediawiki.org/wiki/Help:Linksearch
+
+nvm it is, see here https://wiki.archlinux.org/title/Special:LinkSearch/
