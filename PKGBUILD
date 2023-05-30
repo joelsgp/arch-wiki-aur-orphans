@@ -1,7 +1,7 @@
 # Maintainer: jmcb <joelsgp@protonmail.com>
 
 pkgname=arch-wiki-aur-orphans-git
-pkgver=v0.1.0.r2.ga495643
+pkgver=v0.2.0.r0.gaa129ea
 pkgrel=1
 pkgdesc="Script to locate any AUR packages that are broken and also referenced in the arch wiki"
 arch=('any')
