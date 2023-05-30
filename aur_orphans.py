@@ -9,21 +9,25 @@ from typing import Optional
 from AUR.RPC import AurRpc
 
 
-PRINT_OK = False
+__version__ = "0.1.0"
 
+PRINT_OK = False
 
 PackageNameSet = frozenset[str]
 
 
 def get_parser() -> ArgumentParser:
     parser = ArgumentParser()
-    parser.add_argument("file", nargs="?")
+
+    parser.add_argument("file", nargs="?", help="Defaults to stdin ('-')")
     parser.add_argument(
         "-o",
         "--orphans",
         action="store_true",
         help="ONLY list orphaned packages. Significantly faster as it skips getting package info from AUR RPC",
     )
+    parser.add_argument("-V", "--version", action="version", version=__version__)
+
     return parser
 
 
