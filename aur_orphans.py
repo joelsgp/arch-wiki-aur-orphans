@@ -30,7 +30,7 @@ def get_parser() -> ArgumentParser:
 def list_out_of_date(package_names: PackageNameSet) -> PackageNameSet:
     # get info on package list from AUR RPC
     # this is to find packages that are marked out of date
-    print("Getting out of date packages from AUR rpc")
+    print("2. Getting out of date packages from AUR rpc")
     aur = AurRpc()
     package_info = aur.info(package_names)
 
@@ -48,14 +48,14 @@ def list_out_of_date(package_names: PackageNameSet) -> PackageNameSet:
         else:
             if PRINT_OK:
                 print(f"OK: {name}")
-    print("Finished listing out of date packages")
+    print("2. Finished listing out of date packages")
 
     hit_packages = frozenset(hit_packages)
     return hit_packages
 
 
 def list_orphaned(package_names: PackageNameSet) -> PackageNameSet:
-    print("Getting orphaned packages from AUR rpc")
+    print("1. Getting orphaned packages from AUR rpc")
     aur = AurRpc()
     orphaned_packages = aur.search("", by="maintainer")
 
@@ -64,7 +64,7 @@ def list_orphaned(package_names: PackageNameSet) -> PackageNameSet:
 
     for package in orphaned_packages:
         print(f"Orphaned: {package}")
-    print("Finished listing orphaned packages")
+    print("1. Finished listing orphaned packages")
 
     return hit_packages
 
@@ -72,12 +72,12 @@ def list_orphaned(package_names: PackageNameSet) -> PackageNameSet:
 def list_nonexistent(
     package_names: PackageNameSet, existing_packages: PackageNameSet
 ) -> PackageNameSet:
-    print("Calculating non-existent packages")
+    print("3. Calculating non-existent packages")
     nonexistent_packages = package_names.difference(existing_packages)
 
     for package in nonexistent_packages:
         print(f"Non-existent: {package}")
-    print("Finished listing non-existent packages")
+    print("3. Finished listing non-existent packages")
     return nonexistent_packages
 
 
@@ -95,7 +95,14 @@ def list_wiki_stdin(file: Optional[str] = None) -> PackageNameSet:
         print(f"Reading packages from {file}")
 
     with fileinput.input(files=file) as lines:
-        package_names = frozenset(lines)
+        package_names = frozenset(li.strip() for li in lines)
+    return package_names
+
+
+def get_wiki_list(file: str) -> PackageNameSet:
+    print("0. Getting list of packages to check")
+    package_names = list_wiki_stdin(file)
+    print(f"0. Arch wiki lists {len(package_names)} packages")
     return package_names
 
 
@@ -104,16 +111,16 @@ def main():
     args = parser.parse_args()
 
     # get a set of all AUR packages referenced in the Arch Wiki
-    print("Getting list of packages to check")
     file: Optional[str] = args.file
-    package_names = list_wiki_stdin(file)
-    print(f"Arch wiki lists {len(package_names)} packages")
+    package_names = get_wiki_list(file)
 
+    list_orphaned(package_names)
     only_list_orphans: bool = args.orphans
     if not only_list_orphans:
         existing_packages = list_out_of_date(package_names)
-        list_nonexistent(package_names, existing_packages)
-    list_orphaned(package_names)
+        list_nonexistent(
+            package_names=package_names, existing_packages=existing_packages
+        )
 
 
 if __name__ == "__main__":
