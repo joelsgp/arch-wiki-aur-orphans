@@ -2,6 +2,8 @@
 
 Script to locate any AUR packages that are broken and also referenced in the arch wiki
 
+Current output as of 2023-05-30: https://gist.github.com/joelsgp/f2090cf0744cacd964e6f29a06ef6362
+
 1. Clone
    - `git clone https://github.com/joelsgp/arch-wiki-aur-orphans.git`
 2. Install dependencies from PKGBUILD
