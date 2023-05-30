@@ -16,14 +16,13 @@ PackageNames = frozenset[str]
 def list_out_of_date(package_names: PackageNames) -> PackageNames:
     # get info on package list from AUR RPC
     # this is to find packages that are marked out of date
-    print("Getting package info from AUR rpc")
+    print("Getting out of date packages from AUR rpc")
     aur = AurRpc()
     package_info = aur.info(package_names)
 
     # this is for finding which packages are nonexistent
     hit_packages = set()
 
-    print("Checking out of date packages")
     for package in package_info:
         name = package["Name"]
         hit_packages.add(name)
@@ -35,6 +34,7 @@ def list_out_of_date(package_names: PackageNames) -> PackageNames:
         else:
             if PRINT_OK:
                 print(f"OK: {name}")
+    print("Finished listing out of date packages")
 
     hit_packages = frozenset(hit_packages)
     return hit_packages
@@ -43,13 +43,14 @@ def list_out_of_date(package_names: PackageNames) -> PackageNames:
 def list_orphaned(package_names: PackageNames) -> PackageNames:
     print("Getting orphaned packages from AUR rpc")
     aur = AurRpc()
-    orphaned_packages = aur.search(by="maintainer")
+    orphaned_packages = aur.search("", by="maintainer")
 
     hit_packages = frozenset(p["Name"] for p in orphaned_packages)
     orphaned_packages = package_names.intersection(hit_packages)
 
     for package in orphaned_packages:
         print(f"Orphaned: {package}")
+    print("Finished listing orphaned packages")
 
     return hit_packages
 
