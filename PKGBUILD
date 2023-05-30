@@ -1,9 +1,9 @@
 # Maintainer: jmcb <joelsgp@protonmail.com>
 
-pkgname=arch-wiki-aur-orphans
-pkgver=0.1.0
+pkgname=arch-wiki-aur-orphans-git
+pkgver=v0.1.0.r2.ga495643
 pkgrel=1
-pkgdesc=""
+pkgdesc="Script to locate any AUR packages that are broken and also referenced in the arch wiki"
 arch=('any')
 url="https://github.com/joelsgp/arch-wiki-aur-orphans"
 license=('GPL3')
@@ -11,27 +11,28 @@ depends=('arch-wiki-docs'
          'grep'
          'python'
          'python3-aur')
-makedepends=()
+makedepends=('git')
 checkdepends=()
 optdepends=()
-provides=()
-conflicts=()
-source=()
-sha256sums=()
+provides=("${pkgname%-git}")
+conflicts=("${pkgname%-git}")
+source=("git+https://github.com/joelsgp/${pkgname%-git}.git")
+sha256sums=('SKIP')
 
-#prepare() {
-#  cd "$pkgname-$pkgver"
-#}
-
-#build() {
-#  cd "$pkgname-$pkgver"
-#}
-
-#check() {
-#  cd "$pkgname-$pkgver"
-#}
+pkgver() {
+  cd "${pkgname%-git}"
+  git describe --long --tags --abbrev=7 | sed 's/\([^-]*-g\)/r\1/;s/-/./g'
+}
 
 package() {
-#  cd "$pkgname-$pkgver"
-  echo
+  cd "${pkgname%-git}"
+
+  # copy files
+  _opt="${pkgdir}/opt/${pkgname%-git}"
+  install -D -t "${_opt}/" 'aur_orphans.py' 'list-wiki.sh' 'run.sh'
+
+  # symlink to PATH
+  _bin="${pkgdir}/usr/bin"
+  install -d "${_bin}"
+  ln -s "/opt/${pkgname%-git}/run.sh" "${_bin}/${pkgname%-git}"
 }
