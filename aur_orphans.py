@@ -1,8 +1,10 @@
 #!/usr/bin/env python
+
 import fileinput
 import subprocess
-import sys
+from argparse import ArgumentParser
 from datetime import datetime
+from typing import Optional
 
 from AUR.RPC import AurRpc
 
@@ -11,6 +13,12 @@ PRINT_OK = False
 
 
 PackageNames = frozenset[str]
+
+
+def get_parser() -> ArgumentParser:
+    parser = ArgumentParser()
+    parser.add_argument("file", nargs="?")
+    return parser
 
 
 def list_out_of_date(package_names: PackageNames) -> PackageNames:
@@ -62,17 +70,25 @@ def list_wiki_subprocess() -> PackageNames:
     return package_names
 
 
-def list_wiki_stdin() -> PackageNames:
-    print("Reading packages from stdin")
-    with fileinput.input(files=("-",)) as lines:
+def list_wiki_stdin(file: Optional[str] = None) -> PackageNames:
+    if file is None:
+        print("Reading packages from stdin")
+    else:
+        print(f"Reading packages from {file}")
+
+    with fileinput.input(files=file) as lines:
         package_names = frozenset(lines)
     return package_names
 
 
 def main():
+    parser = get_parser()
+    args = parser.parse_args()
+    file: Optional[str] = args.file
+
     # get a set of all AUR packages referenced in the Arch Wiki
     print("Getting list of packages to check")
-    package_names = list_wiki_stdin()
+    package_names = list_wiki_stdin(file)
     print(f"Arch wiki lists {len(package_names)} packages")
 
     # list_out_of_date(package_names)
