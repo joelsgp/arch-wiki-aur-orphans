@@ -12,16 +12,22 @@ from AUR.RPC import AurRpc
 PRINT_OK = False
 
 
-PackageNames = frozenset[str]
+PackageNameSet = frozenset[str]
 
 
 def get_parser() -> ArgumentParser:
     parser = ArgumentParser()
     parser.add_argument("file", nargs="?")
+    parser.add_argument(
+        "-o",
+        "--orphans",
+        action="store_true",
+        help="ONLY list orphaned packages. Significantly faster as it skips getting package info from AUR RPC",
+    )
     return parser
 
 
-def list_out_of_date(package_names: PackageNames) -> PackageNames:
+def list_out_of_date(package_names: PackageNameSet) -> PackageNameSet:
     # get info on package list from AUR RPC
     # this is to find packages that are marked out of date
     print("Getting out of date packages from AUR rpc")
@@ -48,7 +54,7 @@ def list_out_of_date(package_names: PackageNames) -> PackageNames:
     return hit_packages
 
 
-def list_orphaned(package_names: PackageNames) -> PackageNames:
+def list_orphaned(package_names: PackageNameSet) -> PackageNameSet:
     print("Getting orphaned packages from AUR rpc")
     aur = AurRpc()
     orphaned_packages = aur.search("", by="maintainer")
@@ -63,14 +69,26 @@ def list_orphaned(package_names: PackageNames) -> PackageNames:
     return hit_packages
 
 
-def list_wiki_subprocess() -> PackageNames:
+def list_nonexistent(
+    package_names: PackageNameSet, existing_packages: PackageNameSet
+) -> PackageNameSet:
+    print("Calculating non-existent packages")
+    nonexistent_packages = package_names.difference(existing_packages)
+
+    for package in nonexistent_packages:
+        print(f"Non-existent: {package}")
+    print("Finished listing non-existent packages")
+    return nonexistent_packages
+
+
+def list_wiki_subprocess() -> PackageNameSet:
     print("Getting packages from script")
     stdout = subprocess.check_output("./list-wiki.sh", text=True)
     package_names = frozenset(stdout.splitlines())
     return package_names
 
 
-def list_wiki_stdin(file: Optional[str] = None) -> PackageNames:
+def list_wiki_stdin(file: Optional[str] = None) -> PackageNameSet:
     if file is None:
         print("Reading packages from stdin")
     else:
@@ -84,14 +102,17 @@ def list_wiki_stdin(file: Optional[str] = None) -> PackageNames:
 def main():
     parser = get_parser()
     args = parser.parse_args()
-    file: Optional[str] = args.file
 
     # get a set of all AUR packages referenced in the Arch Wiki
     print("Getting list of packages to check")
+    file: Optional[str] = args.file
     package_names = list_wiki_stdin(file)
     print(f"Arch wiki lists {len(package_names)} packages")
 
-    # list_out_of_date(package_names)
+    only_list_orphans: bool = args.orphans
+    if not only_list_orphans:
+        existing_packages = list_out_of_date(package_names)
+        list_nonexistent(package_names, existing_packages)
     list_orphaned(package_names)
 
 
