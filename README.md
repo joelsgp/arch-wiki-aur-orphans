@@ -4,9 +4,13 @@ update: lol I think their bot already does this actually,
 
 https://wiki.archlinux.org/title/Special:WhatLinksHere/Template:Broken_package_link
 
+Here, function `update_package_template`
+https://github.com/lahwaacz/wiki-scripts/blob/master/update-package-templates.py
+
 See also:
 * https://wiki.archlinux.org/title/Template:Broken_package_link
 * https://wiki.archlinux.org/title/Help:Procedures#Fix_broken_package_links
+* https://wiki.archlinux.org/title/ArchWiki:Bots#Package_templates
 * https://wiki.archlinux.org/title/AUR_Cleanup_Day
 
 Script to locate any AUR packages that are broken and also referenced in the arch wiki
