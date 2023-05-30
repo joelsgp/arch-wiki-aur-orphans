@@ -9,13 +9,10 @@ from AUR.RPC import AurRpc
 PRINT_OK = False
 
 
-def main():
-    # get a set of all AUR packages referenced in the Arch Wiki
-    print("Getting list of packages to check")
-    stdout = subprocess.check_output("./list-wiki.sh", text=True)
-    package_names = frozenset(stdout.splitlines())
-    print(f"Arch wiki lists {len(package_names)} packages")
+PackageNames = frozenset[str]
 
+
+def list_out_of_date(package_names: PackageNames) -> PackageNames:
     # get info on package list from AUR RPC
     # this is to find packages that are marked out of date
     print("Getting package info from AUR rpc")
@@ -38,8 +35,20 @@ def main():
             if PRINT_OK:
                 print(f"OK: {name}")
 
-    # print("Getting orphaned packages from AUR rpc")
+    hit_packages = frozenset(hit_packages)
+    return hit_packages
 
+
+def main():
+    # get a set of all AUR packages referenced in the Arch Wiki
+    print("Getting list of packages to check")
+    stdout = subprocess.check_output("./list-wiki.sh", text=True)
+    package_names = frozenset(stdout.splitlines())
+    print(f"Arch wiki lists {len(package_names)} packages")
+
+    list_out_of_date(package_names)
+
+    # print("Getting orphaned packages from AUR rpc")
 
 
 if __name__ == "__main__":
