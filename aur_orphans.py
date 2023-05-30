@@ -87,7 +87,7 @@ def list_nonexistent(
 
 def list_wiki_subprocess() -> PackageNameSet:
     print("Getting packages from script")
-    stdout = subprocess.check_output("./list-wiki.sh", text=True)
+    stdout = subprocess.check_output("aur-wiki-list.sh", text=True)
     package_names = frozenset(stdout.splitlines())
     return package_names
 

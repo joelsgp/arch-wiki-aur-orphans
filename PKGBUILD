@@ -29,7 +29,7 @@ package() {
 
   # copy files
   _opt="${pkgdir}/opt/${pkgname%-git}"
-  install -D -t "${_opt}/" 'aur_orphans.py' 'list-wiki.sh' 'run.sh'
+  install -D -t "${_opt}/" 'aur-wiki-find.sh' 'aur-wiki-list.sh' 'aur_orphans.py'  'run.sh'
 
   # symlink to PATH
   _bin="${pkgdir}/usr/bin"
