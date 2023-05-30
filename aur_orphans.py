@@ -9,7 +9,7 @@ from typing import Optional
 from AUR.RPC import AurRpc
 
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 PRINT_OK = False
 
